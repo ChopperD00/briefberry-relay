@@ -30,7 +30,7 @@ type Workflow = {
   steps: { name: string; agent: string }[];
 };
 
-type Phase = "choose" | "quiz" | "brief" | "review" | "running";
+type Phase = "choose" | "quiz" | "brief" | "review" | "running" | "type" | "settings";
 
 const CATEGORY_COLORS: Record<string, string> = {
   Production: "#3b82f6",
@@ -158,10 +158,22 @@ export default function StudioPage() {
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Phase nav */}
           <div className="flex items-center gap-1 px-6 py-2.5 border-b border-stroke-subtle bg-b-surface2/50 shrink-0">
-            <button onClick={() => setPhase("choose")} className={`px-4 py-1.5 rounded-full text-button transition-all ${phase === "choose" ? "bg-b-primary text-t-light" : "text-t-secondary hover:text-t-primary hover:bg-b-highlight"}`}>Workflows</button>
-            <button onClick={() => setPhase("quiz")} className={`px-4 py-1.5 rounded-full text-button transition-all ${phase === "quiz" ? "bg-b-primary text-t-light" : "text-t-secondary hover:text-t-primary hover:bg-b-highlight"}`}>Build Brief</button>
-            <button onClick={() => setPhase("brief")} className={`px-4 py-1.5 rounded-full text-button transition-all ${phase === "brief" ? "bg-b-primary text-t-light" : "text-t-secondary hover:text-t-primary hover:bg-b-highlight"}`}>View Brief</button>
-            <button onClick={() => setPhase("review")} className={`px-4 py-1.5 rounded-full text-button transition-all ${phase === "review" ? "bg-b-primary text-t-light" : "text-t-secondary hover:text-t-primary hover:bg-b-highlight"}`}>Review</button>
+            {(["choose", "quiz", "brief", "review"] as Phase[]).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPhase(p)}
+                className={`px-4 py-1.5 rounded-full text-button transition-all capitalize ${
+                  phase === p
+                    ? "bg-b-primary text-t-light"
+                    : "text-t-secondary hover:text-t-primary hover:bg-b-highlight"
+                }`}
+              >
+                {p === "choose" ? "Workflows" : p === "quiz" ? "Build Brief" : p === "brief" ? "View Brief" : "Review"}
+              </button>
+            ))}
+            <div className="w-px h-5 bg-stroke-subtle mx-1" />
+            <button onClick={() => setPhase("type")} className={`px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wider transition-all ${phase === "type" ? "bg-primary1/15 text-primary1 border border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5"}`}>{"\u2317"} TYPE</button>
+            <button onClick={() => setPhase("settings")} className={`px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wider transition-all ${phase === "settings" ? "bg-primary1/15 text-primary1 border border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5"}`}>{"\u2699"} SETTINGS</button>
             {selectedWorkflow && (
               <div className="ml-auto flex items-center gap-2">
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider" style={{ background: (CATEGORY_COLORS[selectedWorkflow.category] || "#888") + "15", color: CATEGORY_COLORS[selectedWorkflow.category] || "#888" }}>{selectedWorkflow.category.toUpperCase()}</span>
@@ -355,6 +367,91 @@ export default function StudioPage() {
                   <div className="flex gap-3 justify-center">
                     <Button isSecondary onClick={() => setPhase("brief")}>View Brief</Button>
                     <Button isStroke onClick={() => setPhase("choose")}>New Workflow</Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ═══ TYPE GUIDE PHASE ═══ */}
+            {phase === "type" && (
+              <div className="h-full">
+                <iframe
+                  src="https://ryujin.inferis.app/type-reference.html"
+                  className="w-full h-full border-0"
+                  style={{ minHeight: "calc(100vh - 120px)" }}
+                  title="Type System Reference"
+                />
+              </div>
+            )}
+
+            {/* ═══ SETTINGS PHASE ═══ */}
+            {phase === "settings" && (
+              <div className="p-8 max-w-2xl mx-auto">
+                <h2 className="text-h3 mb-6">Display Settings</h2>
+
+                {/* Theme */}
+                <div className="mb-6">
+                  <div className="text-[10px] font-bold tracking-[0.2em] text-t-tertiary mb-3">APPEARANCE</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[{v:"dark",icon:"\u25D1",l:"Dark"},{v:"light",icon:"\u25CB",l:"Light"},{v:"system",icon:"\u25D0",l:"System"}].map(t => (
+                      <button key={t.v} onClick={() => { document.documentElement.setAttribute("data-theme", t.v === "system" ? (window.matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light") : t.v); try{const s=JSON.parse(localStorage.getItem("argon-display-settings")||"{}");s.theme=t.v;localStorage.setItem("argon-display-settings",JSON.stringify(s))}catch(e){} }}
+                        className="p-4 rounded-xl border border-stroke2 bg-b-surface2 hover:border-stroke-highlight hover:shadow-hover transition-all text-center">
+                        <div className="text-2xl mb-2">{t.icon}</div>
+                        <div className="text-heading">{t.l}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Font Size */}
+                <div className="mb-6">
+                  <div className="text-[10px] font-bold tracking-[0.2em] text-t-tertiary mb-3">TEXT SIZE</div>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[{v:"sm",s:"14px",l:"Small"},{v:"md",s:"16px",l:"Default"},{v:"lg",s:"18px",l:"Large"},{v:"xl",s:"20px",l:"XL"}].map(f => (
+                      <button key={f.v} onClick={() => { document.documentElement.style.fontSize=f.s; try{const s=JSON.parse(localStorage.getItem("argon-display-settings")||"{}");s.fontSize=f.v;localStorage.setItem("argon-display-settings",JSON.stringify(s))}catch(e){} }}
+                        className="p-3 rounded-xl border border-stroke2 bg-b-surface2 hover:border-stroke-highlight transition-all text-center">
+                        <div style={{fontSize:f.s,fontWeight:500}} className="mb-1">A</div>
+                        <div className="text-[10px] text-t-tertiary">{f.l}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Font Library */}
+                <div className="mb-6">
+                  <div className="text-[10px] font-bold tracking-[0.2em] text-t-tertiary mb-3">FONT LIBRARY</div>
+                  <div className="p-4 rounded-xl border border-stroke2 bg-b-surface2">
+                    <p className="text-heading text-t-secondary mb-3">Google Fonts and Adobe Fonts browser available in the full settings panel.</p>
+                    <a href="https://ryujin.inferis.app/type-reference.html" target="_blank" className="text-button text-primary1 hover:underline">Open Type Reference with Font Library {"\u2192"}</a>
+                  </div>
+                </div>
+
+                {/* Claude Code Integration */}
+                <div className="mb-6">
+                  <div className="text-[10px] font-bold tracking-[0.2em] text-t-tertiary mb-3">CLAUDE CODE INTEGRATION</div>
+                  <div className="p-4 rounded-xl border border-stroke2 bg-b-surface2">
+                    <p className="text-heading text-t-secondary mb-3">Export briefs directly as CLAUDE.md runbooks for Claude Code projects.</p>
+                    <div className="flex gap-2">
+                      <button onClick={() => setPhase("brief")} className="px-4 py-2 rounded-lg bg-primary2/10 border border-primary2/20 text-[12px] font-medium text-primary2 hover:bg-primary2/20 transition-all">Go to Brief {"\u2192"} Export</button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Links */}
+                <div>
+                  <div className="text-[10px] font-bold tracking-[0.2em] text-t-tertiary mb-3">QUICK LINKS</div>
+                  <div className="space-y-2">
+                    {[
+                      {l:"Console",u:"https://ryujin.inferis.app"},
+                      {l:"Type Reference",u:"https://ryujin.inferis.app/type-reference.html"},
+                      {l:"Quick Start Guide",u:"https://ryujin.inferis.app/guide"},
+                      {l:"Arg0n Engine",u:"https://arg0n.dev"},
+                    ].map(lk => (
+                      <a key={lk.l} href={lk.u} target="_blank" className="flex items-center justify-between p-3 rounded-xl border border-stroke2 bg-b-surface2 hover:border-stroke-highlight transition-all group">
+                        <span className="text-heading text-t-primary group-hover:text-primary1">{lk.l}</span>
+                        <span className="text-small text-t-tertiary">{lk.u.replace("https://","")}</span>
+                      </a>
+                    ))}
                   </div>
                 </div>
               </div>
