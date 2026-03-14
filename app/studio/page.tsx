@@ -8,6 +8,7 @@ import BriefCategory from "@/components/BriefCategory";
 import Button from "@/components/Button";
 import Icon from "@/components/Icon";
 import ExportBrief from "@/components/ExportBrief";
+import WorkflowBuilder from "@/components/WorkflowBuilder";
 
 const RYUJIN = "https://ryujin.inferis.app";
 
@@ -30,7 +31,7 @@ type Workflow = {
   steps: { name: string; agent: string }[];
 };
 
-type Phase = "choose" | "quiz" | "brief" | "review" | "running" | "type" | "settings";
+type Phase = "choose" | "builder" | "quiz" | "brief" | "review" | "running" | "type" | "settings";
 
 const CATEGORY_COLORS: Record<string, string> = {
   Production: "#3b82f6",
@@ -53,6 +54,11 @@ export default function StudioPage() {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
   const [expandedWorkflow, setExpandedWorkflow] = useState<Workflow | null>(null);
+
+  const openWorkflow = (wf: Workflow) => {
+    setSelectedWorkflow(wf);
+    setPhase("builder");
+  };
   const [activeAgent, setActiveAgent] = useState<string | null>(null);
   const [meshStatus, setMeshStatus] = useState<any>(null);
   const [runningStep, setRunningStep] = useState<number>(-1);
@@ -158,7 +164,7 @@ export default function StudioPage() {
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Phase nav */}
           <div className="flex items-center gap-1 px-6 py-2.5 border-b border-stroke-subtle bg-b-surface2/50 shrink-0">
-            {(["choose", "quiz", "brief", "review"] as Phase[]).map((p) => (
+            {(["choose", "builder", "quiz", "brief", "review"] as Phase[]).map((p) => (
               <button
                 key={p}
                 onClick={() => setPhase(p)}
@@ -168,7 +174,7 @@ export default function StudioPage() {
                     : "text-t-secondary hover:text-t-primary hover:bg-b-highlight"
                 }`}
               >
-                {p === "choose" ? "Workflows" : p === "quiz" ? "Build Brief" : p === "brief" ? "View Brief" : "Review"}
+                {p === "choose" ? "Workflows" : p === "builder" ? (selectedWorkflow?.name || "Builder") : p === "quiz" ? "Build Brief" : p === "brief" ? "View Brief" : "Review"}
               </button>
             ))}
             <div className="w-px h-5 bg-stroke-subtle mx-1" />
@@ -215,53 +221,26 @@ export default function StudioPage() {
                         </div>
                         <div className="grid grid-cols-2 gap-3 max-md:grid-cols-1">
                           {catWfs.map((wf) => (
-                            <div key={wf.id} className={`relative flex flex-col p-5 rounded-2xl border transition-all text-left ${expandedWorkflow?.id === wf.id ? "border-primary1/40 bg-primary1/5 shadow-hover" : "border-stroke2 bg-b-surface2 hover:border-stroke-highlight hover:shadow-hover"}`}>
-                              <button onClick={() => setExpandedWorkflow(expandedWorkflow?.id === wf.id ? null : wf)} className="text-left w-full">
-                                <div className="flex items-start gap-3 mb-3">
-                                  <span className="text-2xl">{CATEGORY_ICONS[wf.id] || "\u25C6"}</span>
-                                  <div>
-                                    <div className={`text-body-bold transition-colors ${expandedWorkflow?.id === wf.id ? "text-primary1" : "text-t-primary"}`}>{wf.name}</div>
-                                    <div className="text-small text-t-secondary mt-0.5">{wf.description}</div>
-                                  </div>
+                            <button key={wf.id} onClick={() => openWorkflow(wf)}
+                              className="flex flex-col p-5 rounded-2xl border border-stroke2 bg-b-surface2 hover:border-stroke-highlight hover:shadow-hover transition-all text-left group">
+                              <div className="flex items-start gap-3 mb-3">
+                                <span className="text-2xl">{CATEGORY_ICONS[wf.id] || "\u25C6"}</span>
+                                <div>
+                                  <div className="text-body-bold text-t-primary group-hover:text-primary1 transition-colors">{wf.name}</div>
+                                  <div className="text-small text-t-secondary mt-0.5">{wf.description}</div>
                                 </div>
-                                {/* Step dots */}
-                                <div className="flex items-center gap-1.5 pt-3 border-t border-stroke-subtle">
-                                  <span className="text-[10px] text-t-tertiary tracking-wider">{wf.steps.length} STEPS</span>
-                                  <span className="text-[10px] text-t-tertiary mx-1">{"\u00B7"}</span>
-                                  <div className="flex gap-1">
-                                    {wf.steps.map((s, i) => {
-                                      const agent = AGENTS.find((a) => a.id === s.agent);
-                                      return <span key={i} className="w-4 h-4 rounded-full flex items-center justify-center text-[7px] font-bold" style={{ background: (agent?.color || "#888") + "22", color: agent?.color || "#888" }} title={s.name + " \u2192 " + s.agent}>{s.agent[0].toUpperCase()}</span>;
-                                    })}
-                                  </div>
+                              </div>
+                              <div className="flex items-center gap-1.5 pt-3 border-t border-stroke-subtle">
+                                <span className="text-[10px] text-t-tertiary tracking-wider">{wf.steps.length} STEPS</span>
+                                <span className="text-[10px] text-t-tertiary mx-1">{"\u00B7"}</span>
+                                <div className="flex gap-1">
+                                  {wf.steps.map((s, i) => {
+                                    const agent = AGENTS.find((a) => a.id === s.agent);
+                                    return <span key={i} className="w-4 h-4 rounded-full flex items-center justify-center text-[7px] font-bold" style={{ background: (agent?.color || "#888") + "22", color: agent?.color || "#888" }} title={s.name + " \u2192 " + s.agent}>{s.agent[0].toUpperCase()}</span>;
+                                  })}
                                 </div>
-                              </button>
-
-                              {/* Expanded actions */}
-                              {expandedWorkflow?.id === wf.id && (
-                                <div className="mt-4 pt-4 border-t border-primary1/20">
-                                  {/* Step details */}
-                                  <div className="mb-4 space-y-1.5">
-                                    {wf.steps.map((s, i) => {
-                                      const agent = AGENTS.find((a) => a.id === s.agent);
-                                      return (
-                                        <div key={i} className="flex items-center gap-2 text-[12px]">
-                                          <span className="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0" style={{ background: (agent?.color || "#888") + "22", color: agent?.color || "#888" }}>{i + 1}</span>
-                                          <span className="text-t-primary font-medium">{s.name}</span>
-                                          <span className="text-t-tertiary">{"\u2192"}</span>
-                                          <span style={{ color: agent?.color }} className="font-medium uppercase text-[10px] tracking-wider">{s.agent}</span>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                  {/* Action buttons */}
-                                  <div className="flex gap-2">
-                                    <button onClick={() => runWorkflow(wf)} className="flex-1 px-4 py-2.5 rounded-xl bg-b-primary text-t-light text-button hover:bg-b-primary/90 transition-all active:scale-[0.98]">Run Workflow</button>
-                                    <button onClick={() => startCustomBrief(wf)} className="flex-1 px-4 py-2.5 rounded-xl border border-stroke2 text-button text-t-secondary hover:text-t-primary hover:border-stroke-highlight transition-all">Custom Brief</button>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
+                              </div>
+                            </button>
                           ))}
                         </div>
                       </div>
@@ -269,6 +248,11 @@ export default function StudioPage() {
                   })}
                 </div>
               </div>
+            )}
+
+            {/* ═══ BUILDER PHASE ═══ */}
+            {phase === "builder" && selectedWorkflow && (
+              <WorkflowBuilder workflow={selectedWorkflow} onBack={() => setPhase("choose")} />
             )}
 
             {/* ═══ RUNNING PHASE ═══ */}
