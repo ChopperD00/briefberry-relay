@@ -31,7 +31,7 @@ type Workflow = {
   steps: { name: string; agent: string }[];
 };
 
-type Phase = "choose" | "builder" | "quiz" | "brief" | "review" | "running" | "type" | "settings";
+type Phase = "choose" | "builder" | "quiz" | "brief" | "review" | "running" | "type" | "guide" | "settings";
 
 const CATEGORY_COLORS: Record<string, string> = {
   Production: "#3b82f6",
@@ -147,9 +147,9 @@ export default function StudioPage() {
               <span className="text-[10px] text-primary2 font-medium tracking-wider">{meshStatus.inferis_core || "MESH ONLINE"}</span>
             </div>
           )}
-          <button onClick={() => window.open(`${RYUJIN}/type-reference.html`, "_blank")} className="px-2.5 py-1 rounded text-[10px] font-bold tracking-wider text-t-tertiary hover:text-primary1 hover:bg-primary1/5 border border-transparent hover:border-primary1/20 transition-all">{"\u2317"} TYPE</button>
-          <button onClick={() => window.open(`${RYUJIN}/guide`, "_blank")} className="px-2.5 py-1 rounded text-[10px] font-bold tracking-wider text-t-tertiary hover:text-primary1 hover:bg-primary1/5 border border-transparent hover:border-primary1/20 transition-all">? GUIDE</button>
-          <button onClick={() => { if (typeof (window as any).InferisSettings !== "undefined") (window as any).InferisSettings.open(); }} className="px-2.5 py-1 rounded text-[10px] font-bold tracking-wider text-t-tertiary hover:text-primary1 hover:bg-primary1/5 border border-transparent hover:border-primary1/20 transition-all">{"\u2699"} SETTINGS</button>
+          <button onClick={() => setPhase("type")} className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider border transition-all ${phase === "type" ? "text-primary1 bg-primary1/10 border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5 border-transparent hover:border-primary1/20"}`}>{"\u2317"} TYPE</button>
+          <button onClick={() => setPhase("guide")} className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider border transition-all ${phase === "guide" ? "text-primary1 bg-primary1/10 border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5 border-transparent hover:border-primary1/20"}`}>? GUIDE</button>
+          <button onClick={() => setPhase("settings")} className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider border transition-all ${phase === "settings" ? "text-primary1 bg-primary1/10 border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5 border-transparent hover:border-primary1/20"}`}>{"\u2699"} SETTINGS</button>
         </div>
       </div>
 
@@ -177,9 +177,6 @@ export default function StudioPage() {
                 {p === "choose" ? "Workflows" : p === "builder" ? (selectedWorkflow?.name || "Builder") : p === "quiz" ? "Build Brief" : p === "brief" ? "View Brief" : "Review"}
               </button>
             ))}
-            <div className="w-px h-5 bg-stroke-subtle mx-1" />
-            <button onClick={() => setPhase("type")} className={`px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wider transition-all ${phase === "type" ? "bg-primary1/15 text-primary1 border border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5"}`}>{"\u2317"} TYPE</button>
-            <button onClick={() => setPhase("settings")} className={`px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wider transition-all ${phase === "settings" ? "bg-primary1/15 text-primary1 border border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5"}`}>{"\u2699"} SETTINGS</button>
             {selectedWorkflow && (
               <div className="ml-auto flex items-center gap-2">
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider" style={{ background: (CATEGORY_COLORS[selectedWorkflow.category] || "#888") + "15", color: CATEGORY_COLORS[selectedWorkflow.category] || "#888" }}>{selectedWorkflow.category.toUpperCase()}</span>
@@ -356,14 +353,36 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* ═══ TYPE GUIDE PHASE ═══ */}
+            {/* ═══ TYPE PHASE ═══ */}
             {phase === "type" && (
-              <div className="h-full">
+              <div className="flex flex-col h-full">
+                <div className="flex items-center gap-3 px-5 py-3 border-b border-stroke-subtle bg-b-surface2/50 shrink-0">
+                  <button onClick={() => setPhase("choose")} className="flex items-center gap-1 text-[11px] text-t-tertiary hover:text-t-primary transition-colors">{"\u2190"} STUDIO</button>
+                  <div className="w-px h-4 bg-stroke-subtle" />
+                  <span className="text-heading font-medium text-t-primary">{"\u2317"} Type System Reference</span>
+                </div>
                 <iframe
                   src="https://ryujin.inferis.app/type-reference.html"
-                  className="w-full h-full border-0"
-                  style={{ minHeight: "calc(100vh - 120px)" }}
+                  className="w-full flex-1 border-0"
+                  style={{ minHeight: "calc(100vh - 160px)" }}
                   title="Type System Reference"
+                />
+              </div>
+            )}
+
+            {/* ═══ GUIDE PHASE ═══ */}
+            {phase === "guide" && (
+              <div className="flex flex-col h-full">
+                <div className="flex items-center gap-3 px-5 py-3 border-b border-stroke-subtle bg-b-surface2/50 shrink-0">
+                  <button onClick={() => setPhase("choose")} className="flex items-center gap-1 text-[11px] text-t-tertiary hover:text-t-primary transition-colors">{"\u2190"} STUDIO</button>
+                  <div className="w-px h-4 bg-stroke-subtle" />
+                  <span className="text-heading font-medium text-t-primary">? Quick Start Guide</span>
+                </div>
+                <iframe
+                  src="https://ryujin.inferis.app/guide"
+                  className="w-full flex-1 border-0"
+                  style={{ minHeight: "calc(100vh - 160px)" }}
+                  title="Quick Start Guide"
                 />
               </div>
             )}
@@ -371,7 +390,11 @@ export default function StudioPage() {
             {/* ═══ SETTINGS PHASE ═══ */}
             {phase === "settings" && (
               <div className="p-8 max-w-2xl mx-auto">
-                <h2 className="text-h3 mb-6">Display Settings</h2>
+                <div className="flex items-center gap-3 mb-6">
+                  <button onClick={() => setPhase("choose")} className="flex items-center gap-1 text-[11px] text-t-tertiary hover:text-t-primary transition-colors">{"\u2190"} STUDIO</button>
+                  <div className="w-px h-4 bg-stroke-subtle" />
+                  <h2 className="text-h3">{"\u2699"} Settings</h2>
+                </div>
 
                 {/* Theme */}
                 <div className="mb-6">
