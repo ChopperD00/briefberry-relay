@@ -81,7 +81,7 @@ const References = ({ onLinksChange, onFilesChange }: ReferencesProps) => {
 
     return (
         <div className="">
-            {/* ── File upload zone ── */}
+            {/* File upload zone */}
             <div
                 className={`relative flex flex-col justify-center items-center h-50 mb-5 rounded-3xl bg-b-subtle max-md:h-40 cursor-pointer transition-colors ${
                     isDragging
@@ -117,7 +117,7 @@ const References = ({ onLinksChange, onFilesChange }: ReferencesProps) => {
                 </div>
             </div>
 
-            {/* ── Uploaded file chips ── */}
+            {/* Uploaded file chips */}
             {files.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-5">
                     {files.map((file, i) => {
@@ -143,7 +143,7 @@ const References = ({ onLinksChange, onFilesChange }: ReferencesProps) => {
                                         handleRemoveFile(i);
                                     }}
                                 >
-                                    \u00d7
+                                    ×
                                 </button>
                             </div>
                         );
@@ -151,7 +151,7 @@ const References = ({ onLinksChange, onFilesChange }: ReferencesProps) => {
                 </div>
             )}
 
-            {/* ── Link input ── */}
+            {/* Link input */}
             <div className="flex items-end gap-3 mb-4">
                 <div className="grow" onKeyDown={handleKeyDown}>
                     <Field
@@ -173,7 +173,7 @@ const References = ({ onLinksChange, onFilesChange }: ReferencesProps) => {
                 </Button>
             </div>
 
-            {/* ── Added links list ── */}
+            {/* Added links list */}
             {links.length > 0 && (
                 <div className="flex flex-col gap-2">
                     {links.map((link, i) => (
@@ -181,7 +181,7 @@ const References = ({ onLinksChange, onFilesChange }: ReferencesProps) => {
                             key={`${link}-${i}`}
                             className="flex items-center gap-3 px-4 py-3 rounded-xl border border-stroke2 bg-b-surface2 group"
                         >
-                            <span className="text-small text-t-tertiary shrink-0">\ud83d\udd17</span>
+                            <span className="text-small text-t-tertiary shrink-0">🔗</span>
                             <a
                                 href={link.startsWith("http") ? link : `https://${link}`}
                                 target="_blank"
@@ -195,7 +195,7 @@ const References = ({ onLinksChange, onFilesChange }: ReferencesProps) => {
                                 className="shrink-0 ml-auto size-6 flex items-center justify-center rounded-full hover:bg-primary3/20 text-t-tertiary hover:text-primary3 transition-colors opacity-0 group-hover:opacity-100"
                                 onClick={() => handleRemoveLink(i)}
                             >
-                                \u00d7
+                                ×
                             </button>
                         </div>
                     ))}
