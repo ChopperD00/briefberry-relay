@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@/components/Button";
 import Field from "@/components/Field";
 import MyDatePicker from "@/components/MyDatePicker";
@@ -6,12 +6,36 @@ import TypeBrief from "./TypeBrief";
 import References from "./References";
 import Budget from "./Budget";
 
-const Form = ({}) => {
+type FormProps = {
+    onChange?: (data: Record<string, string>) => void;
+    onComplete?: (data: Record<string, string>) => void;
+    initialData?: Record<string, string>;
+};
+
+const Form = ({ onChange, onComplete, initialData }: FormProps) => {
     const [activeId, setActiveId] = useState(0);
-    const [projectName, setProjectName] = useState("");
-    const [projectGoals, setProjectGoals] = useState("");
-    const [yourBudget, setYourBudget] = useState("");
-    const [date, setDate] = useState("");
+    const [projectName, setProjectName] = useState(initialData?.projectName || "");
+    const [projectGoals, setProjectGoals] = useState(initialData?.goals || "");
+    const [yourBudget, setYourBudget] = useState(initialData?.budget || "");
+    const [date, setDate] = useState(initialData?.timeline || "");
+    const [projectType, setProjectType] = useState(initialData?.projectType || "");
+    const [referenceLinks, setReferenceLinks] = useState<string[]>([]);
+
+    const collectData = () => ({
+        projectName,
+        projectType,
+        goals: projectGoals,
+        timeline: date,
+        budget: yourBudget,
+        references: referenceLinks.join("\n"),
+        introduction: `${projectType ? projectType + " project" : "Project"}: ${projectName || "Untitled"}. ${projectGoals}`,
+        conclusion: "",
+    });
+
+    // Notify parent on every field change
+    useEffect(() => {
+        onChange?.(collectData());
+    }, [projectName, projectGoals, yourBudget, date, projectType, referenceLinks]);
 
     const handleNext = () => {
         if (activeId < 6) {
@@ -22,6 +46,13 @@ const Form = ({}) => {
     const handlePrevious = () => {
         if (activeId > 0) {
             setActiveId(activeId - 1);
+        }
+    };
+
+    const handleComplete = () => {
+        const data = collectData();
+        if (onComplete) {
+            onComplete(data);
         }
     };
 
@@ -48,7 +79,7 @@ const Form = ({}) => {
                 </div>
             </div>
             <div className="">
-                {activeId === 0 && <TypeBrief />}
+                {activeId === 0 && <TypeBrief onSelect={(type: string) => setProjectType(type)} />}
                 {activeId === 1 && (
                     <Field
                         label="Project name"
@@ -91,7 +122,11 @@ const Form = ({}) => {
                     />
                 )}
                 {activeId === 5 && <Budget />}
-                {activeId === 6 && <References />}
+                {activeId === 6 && (
+                    <References
+                        onLinksChange={(newLinks) => setReferenceLinks(newLinks)}
+                    />
+                )}
             </div>
             <div className="flex mt-auto pt-10 max-md:-mx-1 max-md:pt-6">
                 {activeId > 0 && (
@@ -107,8 +142,7 @@ const Form = ({}) => {
                     <Button
                         className="min-w-40 ml-auto max-md:min-w-[calc(50%-0.5rem)] max-md:mx-1"
                         isSecondary
-                        as="link"
-                        href="/quiz-generating"
+                        onClick={handleComplete}
                     >
                         Continue
                     </Button>

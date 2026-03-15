@@ -116,6 +116,15 @@ export default function StudioPage() {
     setPhase("quiz");
   };
 
+  const handleBriefChange = (data: Record<string, string>) => {
+    setBriefData(data);
+  };
+
+  const handleBriefComplete = (data: Record<string, string>) => {
+    setBriefData(data);
+    setPhase("brief");
+  };
+
   return (
     <div className="flex flex-col h-screen bg-b-surface1 overflow-hidden">
       {/* TOP BAR */}
@@ -147,9 +156,9 @@ export default function StudioPage() {
               <span className="text-[10px] text-primary2 font-medium tracking-wider">{meshStatus.inferis_core || "MESH ONLINE"}</span>
             </div>
           )}
-          <button onClick={() => setPhase("type")} className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider border transition-all ${phase === "type" ? "text-primary1 bg-primary1/10 border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5 border-transparent hover:border-primary1/20"}`}>{"\u2317"} TYPE</button>
+          <button onClick={() => setPhase("type")} className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider border transition-all ${phase === "type" ? "text-primary1 bg-primary1/10 border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5 border-transparent hover:border-primary1/20"}`}>\u2317 TYPE</button>
           <button onClick={() => setPhase("guide")} className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider border transition-all ${phase === "guide" ? "text-primary1 bg-primary1/10 border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5 border-transparent hover:border-primary1/20"}`}>? GUIDE</button>
-          <button onClick={() => setPhase("settings")} className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider border transition-all ${phase === "settings" ? "text-primary1 bg-primary1/10 border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5 border-transparent hover:border-primary1/20"}`}>{"\u2699"} SETTINGS</button>
+          <button onClick={() => setPhase("settings")} className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider border transition-all ${phase === "settings" ? "text-primary1 bg-primary1/10 border-primary1/30" : "text-t-tertiary hover:text-primary1 hover:bg-primary1/5 border-transparent hover:border-primary1/20"}`}>\u2699 SETTINGS</button>
         </div>
       </div>
 
@@ -187,7 +196,7 @@ export default function StudioPage() {
 
           <div className="flex-1 overflow-y-auto">
 
-            {/* ═══ CHOOSE PHASE ═══ */}
+            {/* \u2550\u2550\u2550 CHOOSE PHASE \u2550\u2550\u2550 */}
             {phase === "choose" && (
               <div className="p-8 max-md:p-4">
                 <div className="max-w-4xl mx-auto">
@@ -202,7 +211,7 @@ export default function StudioPage() {
                       <div className="w-12 h-12 rounded-xl bg-primary1/10 flex items-center justify-center text-2xl text-primary1 group-hover:scale-110 transition-transform">+</div>
                       <div>
                         <div className="text-body-bold text-t-primary group-hover:text-primary1 transition-colors">Build Custom Brief</div>
-                        <div className="text-small text-t-secondary mt-0.5">Start from scratch — choose your project type, set goals, timeline, and budget step by step.</div>
+                        <div className="text-small text-t-secondary mt-0.5">Start from scratch \u2014 choose your project type, set goals, timeline, and budget step by step.</div>
                       </div>
                     </div>
                   </button>
@@ -229,7 +238,7 @@ export default function StudioPage() {
                               </div>
                               <div className="flex items-center gap-1.5 pt-3 border-t border-stroke-subtle">
                                 <span className="text-[10px] text-t-tertiary tracking-wider">{wf.steps.length} STEPS</span>
-                                <span className="text-[10px] text-t-tertiary mx-1">{"\u00B7"}</span>
+                                <span className="text-[10px] text-t-tertiary mx-1">\u00B7</span>
                                 <div className="flex gap-1">
                                   {wf.steps.map((s, i) => {
                                     const agent = AGENTS.find((a) => a.id === s.agent);
@@ -247,12 +256,12 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* ═══ BUILDER PHASE ═══ */}
+            {/* \u2550\u2550\u2550 BUILDER PHASE \u2550\u2550\u2550 */}
             {phase === "builder" && selectedWorkflow && (
               <WorkflowBuilder workflow={selectedWorkflow} onBack={() => setPhase("choose")} />
             )}
 
-            {/* ═══ RUNNING PHASE ═══ */}
+            {/* \u2550\u2550\u2550 RUNNING PHASE \u2550\u2550\u2550 */}
             {phase === "running" && selectedWorkflow && (
               <div className="flex items-center justify-center min-h-[60vh] px-8">
                 <div className="max-w-lg w-full">
@@ -289,7 +298,7 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* ═══ QUIZ PHASE ═══ */}
+            {/* \u2550\u2550\u2550 QUIZ PHASE \u2550\u2550\u2550 */}
             {phase === "quiz" && (
               <div className="flex min-h-full">
                 <div className="flex justify-center items-start grow px-8 py-12 max-md:pt-8 max-md:px-6">
@@ -304,19 +313,23 @@ export default function StudioPage() {
                                 <span className="w-3 h-3 rounded-full text-[7px] flex items-center justify-center font-bold" style={{ background: (agent?.color || "#888") + "22" }}>{s.agent[0].toUpperCase()}</span>
                                 {s.name}
                               </div>
-                              {i < selectedWorkflow.steps.length - 1 && <span className="text-t-tertiary text-[10px]">{"\u2192"}</span>}
+                              {i < selectedWorkflow.steps.length - 1 && <span className="text-t-tertiary text-[10px]">\u2192</span>}
                             </div>
                           );
                         })}
                       </div>
                     )}
-                    <Form />
+                    <Form
+                      onChange={handleBriefChange}
+                      onComplete={handleBriefComplete}
+                      initialData={briefData}
+                    />
                   </div>
                 </div>
               </div>
             )}
 
-            {/* ═══ BRIEF PHASE ═══ */}
+            {/* \u2550\u2550\u2550 BRIEF PHASE \u2550\u2550\u2550 */}
             {phase === "brief" && (
               <div className="px-8 py-12 max-md:px-4">
                 <div className="relative max-w-170 mx-auto p-12 shadow-hover bg-b-surface4 rounded-4xl before:absolute before:top-full before:left-6 before:right-6 before:-z-1 before:h-3.75 before:rounded-b-4xl before:bg-b-surface2 max-md:px-8 max-md:pb-4 max-md:before:hidden">
@@ -324,13 +337,62 @@ export default function StudioPage() {
                     <Icon name="edit" />
                   </Button>
                   <div className="mb-10">
-                    <div className="mb-2 text-h2">{selectedWorkflow?.name || "Project"} Brief</div>
+                    <div className="mb-2 text-h2">{briefData.projectName || selectedWorkflow?.name || "Project"} Brief</div>
                     <BriefCategory value="ux-ui-design" />
                   </div>
-                  <BriefSection title="Introduction" content={selectedWorkflow ? `Generated by the ${selectedWorkflow.name} workflow using ${selectedWorkflow.steps.length} agent steps: ${selectedWorkflow.steps.map(s => s.agent.toUpperCase()).join(" \u2192 ")}.` : "Build a brief using the Build Brief tab, or select a workflow to auto-generate one."} />
-                  <BriefSection title="Goals" content="Define your project goals in the Build Brief phase, or describe them to Renzo in the Relay Chat." />
-                  <BriefSection title="Timeline" content="Timeline and milestones will be structured based on your workflow selection and project parameters." />
-                  <BriefSection title="Budget" content="Budget breakdown populated from your brief inputs." />
+                  <BriefSection
+                    title="Introduction"
+                    content={
+                      briefData.introduction
+                        ? <p>{briefData.introduction}{selectedWorkflow ? ` Workflow: ${selectedWorkflow.name} (${selectedWorkflow.steps.map(s => s.agent.toUpperCase()).join(" \u2192 ")}).` : ""}</p>
+                        : <p>{selectedWorkflow ? `Generated by the ${selectedWorkflow.name} workflow using ${selectedWorkflow.steps.length} agent steps.` : "Build a brief using the Build Brief tab, or select a workflow to auto-generate one."}</p>
+                    }
+                  />
+                  <BriefSection
+                    title="Goals"
+                    content={
+                      briefData.goals
+                        ? <p>{briefData.goals}</p>
+                        : <p className="text-t-tertiary italic">No goals defined yet. Go to Build Brief to add project goals.</p>
+                    }
+                  />
+                  <BriefSection
+                    title="Timeline"
+                    content={
+                      briefData.timeline
+                        ? <p>Target completion: {briefData.timeline}</p>
+                        : <p className="text-t-tertiary italic">No deadline set. Go to Build Brief to set a timeline.</p>
+                    }
+                  />
+                  <BriefSection
+                    title="Budget"
+                    content={
+                      briefData.budget
+                        ? <p>${briefData.budget}</p>
+                        : <p className="text-t-tertiary italic">No budget specified. Go to Build Brief to set your budget.</p>
+                    }
+                  />
+                  {briefData.references && (
+                    <BriefSection
+                      title="References & Inspiration"
+                      content={
+                        <div className="space-y-1">
+                          {briefData.references.split("\n").filter(Boolean).map((ref, i) => (
+                            <div key={i}>
+                              <a
+                                href={ref.startsWith("http") ? ref : `https://${ref}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary1 hover:underline break-all"
+                              >
+                                {ref}
+                              </a>
+                            </div>
+                          ))}
+                        </div>
+                      }
+                    />
+                  )}
                   <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-stroke-subtle">
                     <ExportBrief workflow={selectedWorkflow} briefData={briefData} />
                   </div>
@@ -338,11 +400,11 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* ═══ REVIEW PHASE ═══ */}
+            {/* \u2550\u2550\u2550 REVIEW PHASE \u2550\u2550\u2550 */}
             {phase === "review" && (
               <div className="flex flex-col items-center justify-center min-h-[60vh] px-8">
                 <div className="text-center max-w-md">
-                  <div className="text-6xl mb-6">{"\u2713"}</div>
+                  <div className="text-6xl mb-6">\u2713</div>
                   <div className="text-h3 mb-3">Ready for review</div>
                   <div className="text-body text-t-secondary mb-8">Your brief is ready. Ask Renzo in the chat to refine any section, or export it.</div>
                   <div className="flex gap-3 justify-center">
@@ -353,13 +415,13 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* ═══ TYPE PHASE ═══ */}
+            {/* \u2550\u2550\u2550 TYPE PHASE \u2550\u2550\u2550 */}
             {phase === "type" && (
               <div className="flex flex-col h-full">
                 <div className="flex items-center gap-3 px-5 py-3 border-b border-stroke-subtle bg-b-surface2/50 shrink-0">
-                  <button onClick={() => setPhase("choose")} className="flex items-center gap-1 text-[11px] text-t-tertiary hover:text-t-primary transition-colors">{"\u2190"} STUDIO</button>
+                  <button onClick={() => setPhase("choose")} className="flex items-center gap-1 text-[11px] text-t-tertiary hover:text-t-primary transition-colors">\u2190 STUDIO</button>
                   <div className="w-px h-4 bg-stroke-subtle" />
-                  <span className="text-heading font-medium text-t-primary">{"\u2317"} Type System Reference</span>
+                  <span className="text-heading font-medium text-t-primary">\u2317 Type System Reference</span>
                 </div>
                 <iframe
                   src="https://ryujin.inferis.app/type-reference.html"
@@ -370,11 +432,11 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* ═══ GUIDE PHASE ═══ */}
+            {/* \u2550\u2550\u2550 GUIDE PHASE \u2550\u2550\u2550 */}
             {phase === "guide" && (
               <div className="flex flex-col h-full">
                 <div className="flex items-center gap-3 px-5 py-3 border-b border-stroke-subtle bg-b-surface2/50 shrink-0">
-                  <button onClick={() => setPhase("choose")} className="flex items-center gap-1 text-[11px] text-t-tertiary hover:text-t-primary transition-colors">{"\u2190"} STUDIO</button>
+                  <button onClick={() => setPhase("choose")} className="flex items-center gap-1 text-[11px] text-t-tertiary hover:text-t-primary transition-colors">\u2190 STUDIO</button>
                   <div className="w-px h-4 bg-stroke-subtle" />
                   <span className="text-heading font-medium text-t-primary">? Quick Start Guide</span>
                 </div>
@@ -387,13 +449,13 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* ═══ SETTINGS PHASE ═══ */}
+            {/* \u2550\u2550\u2550 SETTINGS PHASE \u2550\u2550\u2550 */}
             {phase === "settings" && (
               <div className="p-8 max-w-2xl mx-auto">
                 <div className="flex items-center gap-3 mb-6">
-                  <button onClick={() => setPhase("choose")} className="flex items-center gap-1 text-[11px] text-t-tertiary hover:text-t-primary transition-colors">{"\u2190"} STUDIO</button>
+                  <button onClick={() => setPhase("choose")} className="flex items-center gap-1 text-[11px] text-t-tertiary hover:text-t-primary transition-colors">\u2190 STUDIO</button>
                   <div className="w-px h-4 bg-stroke-subtle" />
-                  <h2 className="text-h3">{"\u2699"} Settings</h2>
+                  <h2 className="text-h3">\u2699 Settings</h2>
                 </div>
 
                 {/* Theme */}
@@ -429,7 +491,7 @@ export default function StudioPage() {
                   <div className="text-[10px] font-bold tracking-[0.2em] text-t-tertiary mb-3">FONT LIBRARY</div>
                   <div className="p-4 rounded-xl border border-stroke2 bg-b-surface2">
                     <p className="text-heading text-t-secondary mb-3">Google Fonts and Adobe Fonts browser available in the full settings panel.</p>
-                    <a href="https://ryujin.inferis.app/type-reference.html" target="_blank" className="text-button text-primary1 hover:underline">Open Type Reference with Font Library {"\u2192"}</a>
+                    <a href="https://ryujin.inferis.app/type-reference.html" target="_blank" className="text-button text-primary1 hover:underline">Open Type Reference with Font Library \u2192</a>
                   </div>
                 </div>
 
@@ -439,7 +501,7 @@ export default function StudioPage() {
                   <div className="p-4 rounded-xl border border-stroke2 bg-b-surface2">
                     <p className="text-heading text-t-secondary mb-3">Export briefs directly as CLAUDE.md runbooks for Claude Code projects.</p>
                     <div className="flex gap-2">
-                      <button onClick={() => setPhase("brief")} className="px-4 py-2 rounded-lg bg-primary2/10 border border-primary2/20 text-[12px] font-medium text-primary2 hover:bg-primary2/20 transition-all">Go to Brief {"\u2192"} Export</button>
+                      <button onClick={() => setPhase("brief")} className="px-4 py-2 rounded-lg bg-primary2/10 border border-primary2/20 text-[12px] font-medium text-primary2 hover:bg-primary2/20 transition-all">Go to Brief \u2192 Export</button>
                     </div>
                   </div>
                 </div>
