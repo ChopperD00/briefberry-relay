@@ -34,8 +34,17 @@ const types = [
     },
 ];
 
-const TypeBrief = ({}) => {
+type TypeBriefProps = {
+    onSelect?: (type: string) => void;
+};
+
+const TypeBrief = ({ onSelect }: TypeBriefProps) => {
     const [active, setActive] = useState<number | null>(null);
+
+    const handleSelect = (type: typeof types[number]) => {
+        setActive(type.id);
+        onSelect?.(type.title);
+    };
 
     return (
         <div className="flex flex-wrap -mt-4 -mx-2 max-md:-mt-3 max-md:-mx-1.5">
@@ -47,7 +56,7 @@ const TypeBrief = ({}) => {
                             : ""
                     }`}
                     key={type.title}
-                    onClick={() => setActive(type.id)}
+                    onClick={() => handleSelect(type)}
                 >
                     <Icon
                         className="mb-8 fill-inherit max-3xl:mb-5"
